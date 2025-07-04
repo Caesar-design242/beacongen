@@ -1,26 +1,17 @@
 # Beacon Classification System
 
-A web-based survey beacon number classification and validation system built with Flask and SQLite.
+A Flask-based web app for generating and managing survey beacon numbers following SURCON standards.
 
 ## Features
-
-- Login with name or prefix
-- Generate beacon numbers (SC/ED format)
-- View history and export CSV
-- Enforces quarterly usage limits
-
-## Tech Stack
-
-- Flask (Backend)
-- SQLite (Development DB)
-- QGIS/PostGIS (Spatial Analysis)
-- TailwindCSS + Bootstrap (Frontend)
-- Python libraries: GeoPandas, Shapely (optional in analysis)
+- Surveyor login via name or prefix
+- Generate beacon numbers with format `SC/ED AA 0001 ZG`
+- Track usage with quarterly limits
+- Export history to CSV
 
 ## Run Locally
-
 ```bash
 git clone https://github.com/yourusername/beacon-classification-system.git
 cd beacon-classification-system
 pip install -r requirements.txt
 python app.py
+```
