@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BeaconGen - Edo Survey Tool</title>
+</head>
+<body>
+    <h1>Beacon Number Generator</h1>
+    <form method="post">
+        <label>Prefix (e.g., AZ):</label><br>
+        <input name="prefix"><br>
+        <label>Quantity (max 200):</label><br>
+        <input name="quantity" type="number"><br><br>
+        <button type="submit">Generate</button>
+    </form>
+
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
+    {% endif %}
+
+    {% if codes %}
+        <h3>Generated Beacon Numbers:</h3>
+        <ul>
+        {% for code in codes %}
+            <li>{{ code }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
