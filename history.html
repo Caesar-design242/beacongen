@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<h2>Generation History</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Beacon Codes</th>
+            <th>Quantity</th>
+            <th>Date</th>
+            <th>Quarter</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td><pre style="white-space: pre-wrap;">{{ log[0] }}</pre></td>
+            <td>{{ log[1] }}</td>
+            <td>{{ log[2] }}</td>
+            <td>{{ log[3] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back</a>
+{% endblock %}
