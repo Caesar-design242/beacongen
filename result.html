@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block title %}Result{% endblock %}
+{% block content %}
+<h2>Generated Beacons</h2>
+<p><strong>Surveyor:</strong> {{ surveyor.name }} ({{ surveyor.prefix }})</p>
+<p><strong>Quantity:</strong> {{ quantity }}</p>
+<ul class="list-group mb-3">
+    {% for code in beacon_codes %}
+    <li class="list-group-item">{{ code }}</li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+{% endblock %}
