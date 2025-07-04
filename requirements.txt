@@ -1,1 +1,7 @@
-flask
+Flask==2.3.3
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Login
+Flask-Migrate
+Flask-Mail
+gunicorn
