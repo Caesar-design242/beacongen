@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Welcome, {{ surveyor.name }}</h2>
+<p><strong>Prefix:</strong> {{ surveyor.prefix }}</p>
+<p><strong>Quarter:</strong> {{ quarter }}</p>
+<p><strong>Beacons Used:</strong> {{ usage }} / 200</p>
+
+<form method="post" action="{{ url_for('generate_beacons') }}">
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Number of Beacons to Generate</label>
+        <input type="number" name="quantity" id="quantity" min="1" max="{{ remaining }}" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success">Generate</button>
+</form>
+
+<a href="{{ url_for('history') }}" class="btn btn-outline-primary mt-3">View History</a>
+<a href="{{ url_for('export_csv') }}" class="btn btn-outline-secondary mt-3">Export CSV</a>
+<a href="{{ url_for('logout') }}" class="btn btn-danger mt-3">Logout</a>
+{% endblock %}
