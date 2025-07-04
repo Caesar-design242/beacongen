@@ -11,7 +11,7 @@ app = Flask(__name__)
 def init_db():
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    
+
     # Surveyor table
     c.execute('''CREATE TABLE IF NOT EXISTS surveyors (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,26 +29,27 @@ def init_db():
                     generated_on TEXT
                 )''')
 
-    # Last serial tracker
+    # Serial tracker
     c.execute('''CREATE TABLE IF NOT EXISTS settings (
                     id INTEGER PRIMARY KEY,
                     last_serial INTEGER
                 )''')
+
+    # Initialize counter
     c.execute("INSERT OR IGNORE INTO settings (id, last_serial) VALUES (1, 0)")
-    
     conn.commit()
     conn.close()
 
 init_db()
 
 # ================================
-# Add Surveyor Function
+# Add Surveyor to DB
 # ================================
 def add_surveyor(name, prefix):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
     try:
-        c.execute("INSERT INTO surveyors (name, prefix) VALUES (?, ?)", (name, prefix))
+        c.execute("INSERT INTO surveyors (name, prefix) VALUES (?, ?)", (name.upper(), prefix.upper()))
         conn.commit()
         print(f"Surveyor {name} ({prefix}) added.")
     except sqlite3.IntegrityError:
@@ -56,7 +57,7 @@ def add_surveyor(name, prefix):
     conn.close()
 
 # ================================
-# Generate Beacon Numbers
+# Beacon Generation Logic
 # ================================
 def generate_beacons(prefix, quantity):
     conn = sqlite3.connect('database.db')
@@ -72,7 +73,7 @@ def generate_beacons(prefix, quantity):
     if count + quantity > 200:
         return "Quota exceeded (max 200 per quarter).", []
 
-    # Get last used serial
+    # Last serial
     c.execute("SELECT last_serial FROM settings WHERE id = 1")
     last_serial = c.fetchone()[0]
 
@@ -86,17 +87,17 @@ def generate_beacons(prefix, quantity):
         c.execute("INSERT INTO beacons (code, surveyor_id, generated_on) VALUES (?, ?, ?)",
                   (code, surveyor_id, datetime.now().isoformat()))
 
-    # Update counters
+    # Update counter
     c.execute("UPDATE surveyors SET quarter_count = quarter_count + ?, last_request = ? WHERE id = ?",
               (quantity, datetime.now().isoformat(), surveyor_id))
     c.execute("UPDATE settings SET last_serial = ?", (last_serial + quantity,))
-    
     conn.commit()
     conn.close()
+
     return "Success", codes
 
 # ================================
-# Home Page: Request Beacons or Show Add Form
+# Homepage – Request Beacons
 # ================================
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -106,10 +107,11 @@ def index():
     missing_prefix = ''
 
     if request.method == 'POST':
-        prefix = request.form.get('prefix')
-        qty = int(request.form.get('quantity'))
+        prefix = request.form.get('prefix', '').strip().upper()
+        qty = int(request.form.get('quantity', 0))
 
-        # Check if surveyor exists
+        print("🔍 Checking surveyor with prefix:", prefix)
+
         conn = sqlite3.connect('database.db')
         c = conn.cursor()
         c.execute("SELECT * FROM surveyors WHERE prefix = ?", (prefix,))
@@ -117,27 +119,29 @@ def index():
         conn.close()
 
         if not row:
-            # Prompt to manually add surveyor
+            print("🟥 Surveyor not found.")
             show_add_form = True
             missing_prefix = prefix
         else:
             message, codes = generate_beacons(prefix, qty)
 
-    return render_template('index.html', message=message, codes=codes, show_add_form=show_add_form, missing_prefix=missing_prefix)
+    return render_template('index.html', message=message, codes=codes,
+                           show_add_form=show_add_form, missing_prefix=missing_prefix)
 
 # ================================
-# Add Surveyor Form Submission
+# Route to Add Surveyor Manually
 # ================================
 @app.route('/add_surveyor', methods=['POST'])
 def handle_add_surveyor():
     name = request.form['name']
-    prefix = request.form['prefix']
+    prefix = request.form['prefix'].strip().upper()
     add_surveyor(name, prefix)
-    return render_template('index.html', message=f"Surveyor {name} added. You can now request beacons.", codes=[], show_add_form=False)
+    return render_template('index.html', message=f"✅ Surveyor {name} added. Now you can generate beacons.",
+                           codes=[], show_add_form=False)
 
 # ================================
-# Run App
+# Launch App
 # ================================
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
-    app.run(debug=False, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
