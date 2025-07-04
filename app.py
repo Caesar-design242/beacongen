@@ -86,6 +86,16 @@ def index():
     except sqlite3.IntegrityError:
         print("Prefix already exists. Choose another.")
     conn.close()
+def add_surveyor(name, prefix):
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO surveyors (name, prefix) VALUES (?, ?)", (name, prefix))
+        conn.commit()
+        print(f"Surveyor {name} ({prefix}) added.")
+    except sqlite3.IntegrityError:
+        print("Prefix already exists.")
+    conn.close()
 
 
 import os
