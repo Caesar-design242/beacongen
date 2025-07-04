@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Beacon Number Generator</title>
+  <title>Beacon Generator</title>
 </head>
 <body>
-  <h2>Request Beacon Numbers</h2>
+  <h2>🔢 Request Beacon Numbers</h2>
   <form method="post" action="/">
     Prefix: <input type="text" name="prefix" required><br>
     Quantity: <input type="number" name="quantity" min="1" max="200" required><br>
@@ -13,7 +13,7 @@
 
   {% if show_add_form %}
     <hr>
-    <h3>Surveyor Not Found - Please Add Manually</h3>
+    <h3>🛑 Surveyor Not Found — Please Register:</h3>
     <form method="post" action="/add_surveyor">
       Name: <input type="text" name="name" required><br>
       Prefix: <input type="text" name="prefix" value="{{ missing_prefix }}" readonly><br>
