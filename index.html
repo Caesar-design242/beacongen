@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>Beacon Generator</title></head>
+<body>
+  <h2>Request Beacon Numbers</h2>
+  <form method="post" action="/">
+    Prefix: <input type="text" name="prefix" required><br>
+    Quantity: <input type="number" name="quantity" required><br>
+    <input type="submit" value="Generate">
+  </form>
+
+  {% if show_add_form %}
+    <hr>
+    <h3>Surveyor Not Found. Please Add Manually:</h3>
+    <form method="post" action="/add_surveyor">
+      Name: <input type="text" name="name" required><br>
+      Prefix: <input type="text" name="prefix" value="{{ missing_prefix }}" required><br>
+      <input type="submit" value="Add Surveyor">
+    </form>
+  {% endif %}
+
+  {% if message %}
+    <h3>{{ message }}</h3>
+    <ul>
+      {% for code in codes %}
+        <li>{{ code }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</body>
+</html>
